@@ -232,6 +232,24 @@ body.active .score__container {
 }
 .game__over.visible {
   display: flex;
+  z-index: 100;
+}
+.win {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  font-size: 48px;
+  background: rgba(180, 0, 0, 0.8);
+  cursor: pointer;
+}
+.win.visible {
+  display: flex;
+  z-index: 100;
 }
 .cards {
   display: none;
