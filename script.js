@@ -38,8 +38,8 @@ scoreButton.addEventListener("click", function () {
    const scoreMoves = document.querySelector(".moves__set");
 
    score.forEach(item => {
-      scoreTime.innerHTML = `<div class="time__score">${item.time}</div>`;
-      scoreMoves.innerHTML = `<div class="moves__score">${item.moves}</div>`;
+      scoreTime.innerHTML += `<div class="time__score">${item.time}</div>`;
+      scoreMoves.innerHTML += `<div class="moves__score">${item.moves}</div>`;
    })
 })
 
