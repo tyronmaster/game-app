@@ -259,6 +259,12 @@ body.active .score__container {
    display: flex;
    z-index: 100;
 }
+
+.attension{
+   padding: 25px;
+   background: rgba(250, 0, 0, .75);
+}
+
 .cards {
    display: none;
    grid-template-columns: repeat(6, auto);
