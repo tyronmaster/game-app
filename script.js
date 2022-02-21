@@ -1,24 +1,32 @@
 /* LOCAL STORAGE */
 
 var score = [];
-var scoreItem = {
-   "time": timeCount,
-   "moves": movesCount
-}
-var timeCount = 0;
-var movesCount = 0;
+var scoreItem = {};
+//var storage = [];
 
-function setLocalStorage() {
-   localStorage.setItem(scoreItem["time"], timeCount);
-   localStorage.setItem(scoreItem["move"], movesCount);
+
+
+function setLocalStorage(scoreItem) {
+   console.log(scoreItem);
+   if (scoreItem) {
+      score.push(scoreItem);
+      score = JSON.stringify(score);
+      localStorage.setItem("Score", score);
+
+
+   }
+
 }
 
-window.addEventListener("beforeunload", setLocalStorage);
+
+//window.addEventListener("beforeunload", setLocalStorage);
 
 function getLocalStorage() {
-   
-      lang = localStorage.getItem("lang");  
-   
+
+   score = JSON.parse(localStorage.getItem("Score")) || [];
+   if (score.length > 10) {
+      score = [];
+   }
 };
 
 window.addEventListener("load", getLocalStorage);
@@ -53,7 +61,7 @@ startButton.forEach(item => item.addEventListener("click", function () {
 // HELP FUNCTION to "prepare" game ====================================
 function prepare() {
    let cards = Array.from(document.querySelectorAll(".card"));
-   let game = new Doom2(100, cards);
+   let game = new Doom2(2, cards);
 
    game.gameStart();
 
@@ -95,10 +103,14 @@ class Doom2 {
       this.steps.innerText = this.totalClicks;
    }
 
-      gameOver() {
-         // try to add totalClicks & timeRemain = "LOOSE!" to localstorage when game is over
+   gameOver() {
+      // try to add totalClicks & timeRemain = "LOOSE!" to localstorage when game is over
+      //console.log("timeRemain " + this.timeRemain + " totalClicks " + this.totalClicks);
+      //score.push({ time: this.timeRemain, moves: this.totalClicks });
+
       clearInterval(this.countdown);
       document.querySelector(".game__over").classList.add("visible");
+
       setTimeout(() => {
 
          // attension!!! shit-code to null game data!!!!!!! just reload page :) 
@@ -108,20 +120,11 @@ class Doom2 {
       }, 5000)
    }
 
-   // set timer countdown 
-   startCountdown() {
-      return setInterval(() => {
-         this.timeRemain--;
-         this.timer.innerText = this.timeRemain;
-         if (this.timeRemain === 0)
-            this.gameOver();
-      }, 1000);
-   }
-
    victory() {
 
       // try to add totalClicks & timeRemain to localstorage when game is over
       //score.push({scoreItem["time"] = timeRemain, scoreItem["move"] = totalClicks});
+      //console.log("timeRemain " + this.timeRemain + " totalClicks " + this.totalClicks);
       clearInterval(this.countdown);
       document.querySelector(".win").classList.add("visible");
 
@@ -134,6 +137,28 @@ class Doom2 {
       }, 5000)
 
    }
+
+
+   // set timer countdown 
+   startCountdown() {
+      return setInterval(() => {
+         this.timeRemain--;
+         this.timer.innerText = this.timeRemain;
+         if (this.timeRemain === 0) {
+            this.gameOver();
+
+            scoreItem.time = this.timeRemain;
+            scoreItem.moves = this.totalClicks;
+
+            setLocalStorage(scoreItem);
+            //console.log(scoreItem);
+         }
+
+
+      }, 1000);
+   }
+
+
    hideCards() {
       this.cardsList.forEach(card => {
          card.classList.remove("visible");
@@ -169,8 +194,14 @@ class Doom2 {
       this.matchedCards.push(card2);
       card1.classList.add("matched");
       card2.classList.add("matched");
-      if (this.matchedCards.length === this.cardsList.length)
+      if (this.matchedCards.length === this.cardsList.length) {
          this.victory();
+
+         scoreItem.time = this.timeRemain;
+         scoreItem.moves = this.totalClicks;
+
+         setLocalStorage(scoreItem);
+      }
    }
 
    cardMismatch(card1, card2) {
@@ -182,8 +213,19 @@ class Doom2 {
       }, 1000);
    }
 
+   // need to get image-src of card
+   getImage(card) {
+      //console.log(card.querySelectorAll(".card__back img"));
+      return card.querySelectorAll(".card__back img")[0].src;
+   }
+   canFlip(card) {
+      return !this.used && !this.matchedCards.includes(card) && card !== this.cardToCheck;
+   }
+
+   /* help methods================================ */
+
    // Fisher-Yates Shuffle Algorithm
-   shuffleCards(cardsList) { 
+   shuffleCards(cardsList) {
       for (let i = cardsList.length - 1; i > 0; i--) {
          let randIndex = Math.floor(Math.random() * (i + 1));
          cardsList[randIndex].style.order = i;
@@ -191,12 +233,13 @@ class Doom2 {
       }
    }
 
-   // need to get image-src of card
-   getImage(card) {
-      console.log(card.querySelectorAll(".card__back img"));
-      return card.querySelectorAll(".card__back img")[0].src;
-   }
-   canFlip(card) {
-      return !this.used && !this.matchedCards.includes(card) && card !== this.cardToCheck;
-   }
+   /* local storage data
+   setStorageData(){
+      scoreItem.time = this.timeRemain;
+      scoreItem.moves = this.totalClicks;
+
+      setLocalStorage(scoreItem);
+      
+   }*/
+
 }

@@ -260,9 +260,9 @@ body.active .score__container {
    z-index: 100;
 }
 
-.attension{
+.attension {
    padding: 25px;
-   background: rgba(250, 0, 0, .75);
+   background: rgba(250, 0, 0, 0.75);
 }
 
 .cards {
