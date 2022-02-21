@@ -1,137 +1,202 @@
+/* LOCAL STORAGE */
+
+var score = [];
+var scoreItem = {
+   "time": timeCount,
+   "moves": movesCount
+}
+var timeCount = 0;
+var movesCount = 0;
+
+function setLocalStorage() {
+   localStorage.setItem(scoreItem["time"], timeCount);
+   localStorage.setItem(scoreItem["move"], movesCount);
+}
+
+window.addEventListener("beforeunload", setLocalStorage);
+
+function getLocalStorage() {
+   
+      lang = localStorage.getItem("lang");  
+   
+};
+
+window.addEventListener("load", getLocalStorage);
+
+/* local storage ends  ==========================*/
+
+
+// GAME MENU SECTION ==================================================
 const startButton = document.querySelectorAll(".start__game");
 const scoreButton = document.querySelector(".show__score");
 const gamePlace = document.querySelector(".main");
 const body = document.querySelector("body");
 
-scoreButton.addEventListener("click", function(){
-    body.classList.add("active");
+scoreButton.addEventListener("click", function () {
+   body.classList.add("active");
 })
 
-startButton.forEach( item => item.addEventListener("click", function() {
-    body.classList.remove("active");
-    gamePlace.classList.add("active");
-    ready();
+startButton.forEach(item => item.addEventListener("click", function () {
+   body.classList.remove("active");
+   gamePlace.classList.add("active");
+   prepare();
 
-    var sound = new Audio("./assets/sounds/d_shawn3.mp3");
-    sound.play();
-    sound.volume = .75;
+   var sound = new Audio("./assets/sounds/d_shawn3.mp3");
+   sound.play();
+   sound.volume = .75;
 
 }));
 
-function ready() {
-    let cards = Array.from(document.querySelectorAll(".card"));
-    let game = new Doom2(100, cards);
+// GAME MENU SECTION ends --------------------------------------------
 
-    game.startGame();
 
-    cards.forEach(card => {
-        card.addEventListener('click', () => {
-            game.flipCard(card);
-        });
-    });
+// HELP FUNCTION to "prepare" game ====================================
+function prepare() {
+   let cards = Array.from(document.querySelectorAll(".card"));
+   let game = new Doom2(100, cards);
+
+   game.gameStart();
+
+   cards.forEach(card => {
+      card.addEventListener('click', () => {
+         game.flipCard(card);
+      });
+   });
 }
 
 
 
 
-/* CRAETE GAME OBJECT */
+/* CREATE GAME OBJECT try ====================================================*/
 
 class Doom2 {
-    constructor(totalTime, cards) {
-        this.cardsArray = cards;
-        this.totalTime = totalTime;
-        this.timeRemaining = totalTime;
-        this.timer = document.querySelector(".time__level");
-        this.steps = document.querySelector(".moves__count");
-    }
+   constructor(time, cards) {
+      this.cardsList = cards;
+      this.time = time;
+      this.timeRemain = time;
+      this.timer = document.querySelector(".time__level");
+      this.steps = document.querySelector(".moves__count");
+   }
 
-    startGame() {
-        this.totalClicks = 0;
-        this.timeRemaining = this.totalTime;
-        this.cardToCheck = null;
-        this.matchedCards = [];
-        this.busy = true;
-        setTimeout(() => {
-            this.shuffleCards(this.cardsArray);
-            this.countdown = this.startCountdown();
-            this.busy = false;
-        }, 500)
-        this.hideCards();
-        this.timer.innerText = this.timeRemaining;
-        this.steps.innerText = this.totalClicks;
-    }
-    startCountdown() {
-        return setInterval(() => {
-            this.timeRemaining--;
-            this.timer.innerText = this.timeRemaining;
-            if(this.timeRemaining === 0)
-                this.gameOver();
-        }, 1000);
-    }
-    gameOver() {
-        clearInterval(this.countdown);
-        document.querySelector(".game__over").classList.add("visible");
-    }
-    victory() {
-        clearInterval(this.countdown);
-        document.querySelector(".win").classList.add("visible");
-    }
-    hideCards() {
-        this.cardsArray.forEach(card => {
-            card.classList.remove("visible");
-            card.classList.remove('matched');
-        });
-    }
-    flipCard(card) {
-        if(this.canFlipCard(card)) {
-            //this.sound.flip();
-            this.totalClicks++;
-            this.steps.innerText = this.totalClicks;
-            card.classList.add('visible');
+   // 
+   gameStart() {
+      this.totalClicks = 0;
+      this.timeRemain = this.time;
+      this.cardToCheck = null;
+      this.matchedCards = [];
+      this.used = true;
+      setTimeout(() => {
+         this.shuffleCards(this.cardsList);
+         this.countdown = this.startCountdown();
+         this.used = false;
+      }, 500)
+      this.hideCards();
+      this.timer.innerText = this.timeRemain;
+      this.steps.innerText = this.totalClicks;
+   }
 
-            if(this.cardToCheck) {
-                this.checkForCardMatch(card);
-            } else {
-                this.cardToCheck = card;
-            }
-        }
-    }
-    checkForCardMatch(card) {
-        if(this.getCardType(card) === this.getCardType(this.cardToCheck))
-            this.cardMatch(card, this.cardToCheck);
-        else 
-            this.cardMismatch(card, this.cardToCheck);
+      gameOver() {
+         // try to add totalClicks & timeRemain = "LOOSE!" to localstorage when game is over
+      clearInterval(this.countdown);
+      document.querySelector(".game__over").classList.add("visible");
+      setTimeout(() => {
 
-        this.cardToCheck = null;
-    }
-    cardMatch(card1, card2) {
-        this.matchedCards.push(card1);
-        this.matchedCards.push(card2);
-        card1.classList.add('matched');
-        card2.classList.add('matched');
-        //this.sound.match();
-        if(this.matchedCards.length === this.cardsArray.length)
-            this.victory();
-    }
-    cardMismatch(card1, card2) {
-        this.busy = true;
-        setTimeout(() => {
-            card1.classList.remove('visible');
-            card2.classList.remove('visible');
-            this.busy = false;
-        }, 1000);
-    }
-    shuffleCards(cardsArray) { // Fisher-Yates Shuffle Algorithm.
-        for (let i = cardsArray.length - 1; i > 0; i--) {
-            let randIndex = Math.floor(Math.random() * (i + 1));
-            cardsArray[randIndex].style.order = i;
-            cardsArray[i].style.order = randIndex;
-        }
-    }
-    getCardType(card) {
-        return card.querySelectorAll(".card__back img")[0].src;
-    }
-    canFlipCard(card) {
-        return !this.busy && !this.matchedCards.includes(card) && card !== this.cardToCheck;
-    }
+         // attension!!! shit-code to null game data!!!!!!! just reload page :) 
+         // NEED TO REFACTOR!!!!!
+         location.reload();
+
+      }, 5000)
+   }
+
+   // set timer countdown 
+   startCountdown() {
+      return setInterval(() => {
+         this.timeRemain--;
+         this.timer.innerText = this.timeRemain;
+         if (this.timeRemain === 0)
+            this.gameOver();
+      }, 1000);
+   }
+
+   victory() {
+
+      // try to add totalClicks & timeRemain to localstorage when game is over
+      //score.push({scoreItem["time"] = timeRemain, scoreItem["move"] = totalClicks});
+      clearInterval(this.countdown);
+      document.querySelector(".win").classList.add("visible");
+
+      setTimeout(() => {
+
+         // attension!!! shit-code to null game data!!!!!!! just reload page :) 
+         // NEED TO REFACTOR!!!!!
+         location.reload();
+
+      }, 5000)
+
+   }
+   hideCards() {
+      this.cardsList.forEach(card => {
+         card.classList.remove("visible");
+         card.classList.remove("matched");
+      });
+   }
+
+   flipCard(card) {
+      if (this.canFlip(card)) {
+         this.totalClicks++;
+         this.steps.innerText = this.totalClicks;
+         card.classList.add("visible");
+
+         if (this.cardToCheck) {
+            this.checkMatch(card);
+         } else {
+            this.cardToCheck = card;
+         }
+      }
+   }
+
+   checkMatch(card) {
+      if (this.getImage(card) === this.getImage(this.cardToCheck))
+         this.cardMatch(card, this.cardToCheck);
+      else
+         this.cardMismatch(card, this.cardToCheck);
+
+      this.cardToCheck = null;
+   }
+
+   cardMatch(card1, card2) {
+      this.matchedCards.push(card1);
+      this.matchedCards.push(card2);
+      card1.classList.add("matched");
+      card2.classList.add("matched");
+      if (this.matchedCards.length === this.cardsList.length)
+         this.victory();
+   }
+
+   cardMismatch(card1, card2) {
+      this.used = true;
+      setTimeout(() => {
+         card1.classList.remove('visible');
+         card2.classList.remove('visible');
+         this.used = false;
+      }, 1000);
+   }
+
+   // Fisher-Yates Shuffle Algorithm
+   shuffleCards(cardsList) { 
+      for (let i = cardsList.length - 1; i > 0; i--) {
+         let randIndex = Math.floor(Math.random() * (i + 1));
+         cardsList[randIndex].style.order = i;
+         cardsList[i].style.order = randIndex;
+      }
+   }
+
+   // need to get image-src of card
+   getImage(card) {
+      console.log(card.querySelectorAll(".card__back img"));
+      return card.querySelectorAll(".card__back img")[0].src;
+   }
+   canFlip(card) {
+      return !this.used && !this.matchedCards.includes(card) && card !== this.cardToCheck;
+   }
 }
