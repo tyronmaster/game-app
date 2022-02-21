@@ -2,9 +2,6 @@
 
 var score = [];
 var scoreItem = {};
-//var storage = [];
-
-
 
 function setLocalStorage(scoreItem) {
    console.log(scoreItem);
@@ -12,14 +9,8 @@ function setLocalStorage(scoreItem) {
       score.push(scoreItem);
       score = JSON.stringify(score);
       localStorage.setItem("Score", score);
-
-
    }
-
 }
-
-
-//window.addEventListener("beforeunload", setLocalStorage);
 
 function getLocalStorage() {
 
@@ -42,6 +33,14 @@ const body = document.querySelector("body");
 
 scoreButton.addEventListener("click", function () {
    body.classList.add("active");
+
+   const scoreTime = document.querySelector(".time__set");
+   const scoreMoves = document.querySelector(".moves__set");
+
+   score.forEach(item => {
+      scoreTime.innerHTML = `<div class="time__score">${item.time}</div>`;
+      scoreMoves.innerHTML = `<div class="moves__score">${item.moves}</div>`;
+   })
 })
 
 startButton.forEach(item => item.addEventListener("click", function () {
