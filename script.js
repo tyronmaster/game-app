@@ -13,7 +13,6 @@ function setLocalStorage(scoreItem) {
 }
 
 function getLocalStorage() {
-
    score = JSON.parse(localStorage.getItem("Score")) || [];
    if (score.length > 10) {
       score.shift(); // RESPECT to Oleksandr M  crjss-check !!!
@@ -51,7 +50,6 @@ startButton.forEach(item => item.addEventListener("click", function () {
    var sound = new Audio("./assets/sounds/d_shawn3.mp3");
    sound.play();
    sound.volume = .75;
-
 }));
 
 // GAME MENU SECTION ends --------------------------------------------
@@ -60,7 +58,6 @@ startButton.forEach(item => item.addEventListener("click", function () {
 // HELP FUNCTION to "prepare" game ====================================
 function prepare() {
    let cards = Array.from(document.querySelectorAll(".card"));
-  // let game = new Doom2(99, cards); //game time increased to 99sec especially for Oleksandr M !!! :)
    let game = new Doom2(50, cards); 
 
    game.gameStart();
@@ -71,8 +68,6 @@ function prepare() {
       });
    });
 }
-
-
 
 
 /* CREATE GAME OBJECT try ====================================================*/
@@ -104,38 +99,24 @@ class Doom2 {
    }
 
    gameOver() {
-      // try to add totalClicks & timeRemain = "LOOSE!" to localstorage when game is over
-      //console.log("timeRemain " + this.timeRemain + " totalClicks " + this.totalClicks);
-      //score.push({ time: this.timeRemain, moves: this.totalClicks });
-
       clearInterval(this.countdown);
       document.querySelector(".game__over").classList.add("visible");
-
       setTimeout(() => {
-
-         // attension!!! shit-code to null game data!!!!!!! just reload page :) 
+         // attention!!! shit-code to null game data!!!!!!! just reload page :) 
          // NEED TO REFACTOR!!!!!
          location.reload();
-
       }, 5000)
    }
 
-   victory() {
 
-      // try to add totalClicks & timeRemain to localstorage when game is over
-      //score.push({scoreItem["time"] = timeRemain, scoreItem["move"] = totalClicks});
-      //console.log("timeRemain " + this.timeRemain + " totalClicks " + this.totalClicks);
+   victory() {
       clearInterval(this.countdown);
       document.querySelector(".win").classList.add("visible");
-
       setTimeout(() => {
-
-         // attension!!! shit-code to null game data!!!!!!! just reload page :) 
+         // attention!!! shit-code to null game data!!!!!!! just reload page :) 
          // NEED TO REFACTOR!!!!!
          location.reload();
-
       }, 5000)
-
    }
 
 
@@ -149,12 +130,8 @@ class Doom2 {
 
             scoreItem.time = this.timeRemain;
             scoreItem.moves = this.totalClicks;
-
             setLocalStorage(scoreItem);
-            //console.log(scoreItem);
          }
-
-
       }, 1000);
    }
 
@@ -171,7 +148,6 @@ class Doom2 {
          this.totalClicks++;
          this.steps.innerText = this.totalClicks;
          card.classList.add("visible");
-
          if (this.cardToCheck) {
             this.checkMatch(card);
          } else {
@@ -196,10 +172,8 @@ class Doom2 {
       card2.classList.add("matched");
       if (this.matchedCards.length === this.cardsList.length) {
          this.victory();
-
          scoreItem.time = this.timeRemain;
          scoreItem.moves = this.totalClicks;
-
          setLocalStorage(scoreItem);
       }
    }
@@ -215,7 +189,6 @@ class Doom2 {
 
    // need to get image-src of card
    getImage(card) {
-      //console.log(card.querySelectorAll(".card__back img"));
       return card.querySelectorAll(".card__back img")[0].src;
    }
    canFlip(card) {
@@ -232,14 +205,4 @@ class Doom2 {
          cardsList[i].style.order = randIndex;
       }
    }
-
-   /* local storage data
-   setStorageData(){
-      scoreItem.time = this.timeRemain;
-      scoreItem.moves = this.totalClicks;
-
-      setLocalStorage(scoreItem);
-      
-   }*/
-
 }
