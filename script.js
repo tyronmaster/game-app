@@ -60,7 +60,7 @@ startButton.forEach(item => item.addEventListener("click", function () {
 // HELP FUNCTION to "prepare" game ====================================
 function prepare() {
    let cards = Array.from(document.querySelectorAll(".card"));
-   let game = new Doom2(50, cards);
+   let game = new Doom2(75, cards);
 
    game.gameStart();
 
