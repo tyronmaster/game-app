@@ -60,7 +60,7 @@ startButton.forEach(item => item.addEventListener("click", function () {
 // HELP FUNCTION to "prepare" game ====================================
 function prepare() {
    let cards = Array.from(document.querySelectorAll(".card"));
-   let game = new Doom2(75, cards);
+   let game = new Doom2(99, cards); //game time incresed especially to Oleksandr M !!! :)
 
    game.gameStart();
 
