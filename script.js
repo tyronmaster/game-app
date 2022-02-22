@@ -16,7 +16,7 @@ function getLocalStorage() {
 
    score = JSON.parse(localStorage.getItem("Score")) || [];
    if (score.length > 10) {
-      score = [];
+      score.shift(); // RESPECT to Oleksandr M  crjss-check !!!
    }
 };
 
@@ -60,7 +60,8 @@ startButton.forEach(item => item.addEventListener("click", function () {
 // HELP FUNCTION to "prepare" game ====================================
 function prepare() {
    let cards = Array.from(document.querySelectorAll(".card"));
-   let game = new Doom2(99, cards); //game time incresed especially to Oleksandr M !!! :)
+  // let game = new Doom2(99, cards); //game time increased to 99sec especially for Oleksandr M !!! :)
+   let game = new Doom2(50, cards); 
 
    game.gameStart();
 
